@@ -1,0 +1,163 @@
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
+
+# Importing the dataset
+dataset = pd.read_csv('UNSW_NB15.csv')
+# Converting object value to numeric
+dataset['B'] = pd.to_numeric(dataset['B'], errors='coerce')
+dataset['D'] = pd.to_numeric(dataset['D'], errors='coerce')
+
+# Converting NUMERIC TO Object value
+dataset['A'] = dataset['A'].astype(object)
+dataset['C'] = dataset['C'].astype(object)
+dataset['E'] = dataset['E'].astype(object)
+dataset['F'] = dataset['F'].astype(object)
+#dataset.convert_objects('B')
+
+#dataset['A'] = pd.to_numeric(dataset['A'], errors='coerce')
+
+#dataset['B'] = pd.to_numeric(dataset['B'], errors='coerce')
+
+#dataset['C'] = pd.to_numeric(dataset['C'], errors='coerce')
+
+#dataset['D'] = pd.to_numeric(dataset['D'], errors='coerce')
+
+#dataset['E'] = pd.to_numeric(dataset['E'], errors='coerce')
+#X = dataset.iloc[:, :-1].values
+#y = dataset.iloc[:, 19].values
+
+dataset.dtypes
+
+dataset.head()
+
+
+h=dataset.select_dtypes(include=[object])
+h.head()
+h.shape
+
+from sklearn import preprocessing
+
+
+
+le=preprocessing.LabelEncoder()
+h2=h.apply(le.fit_transform)
+h2.head()
+
+
+j2=dataset.select_dtypes(exclude=[object])
+
+j2.head(3)
+
+enc=preprocessing.OneHotEncoder()
+enc.fit(h2)
+
+onehotlabels=enc.transform(h2).toarray()
+onehotlabels.shape
+
+#j3=onehotlabels
+
+#type(onehotlabels)
+p=pd.DataFrame(onehotlabels)
+
+#p=p.iloc[:,:-1].values
+p=pd.DataFrame(p)
+k=p.join(j2)
+k.shape
+
+X = k.iloc[:, :-1].values
+
+y = k.iloc[:, 244].values
+
+k.to_csv('one.csv',sep='\t',encoding='utf-8')
+
+
+
+
+# Encoding categorical data
+#from sklearn.preprocessing import LabelEncoder, OneHotEncoder
+#labelencoder_X = LabelEncoder()
+#X[:, 1] = labelencoder_X.fit_transform(X[:, 1])
+#onehotencoder = OneHotEncoder(categorical_features = [1])
+
+
+#X[:, 2] = labelencoder_X.fit_transform(X[:, 2])
+#onehotencoder = OneHotEncoder(categorical_features = [2])
+
+#X[:, 3] = labelencoder_X.fit_transform(X[:, 3])
+#onehotencoder = OneHotEncoder(categorical_features = [3])
+
+#X[:, 4] = labelencoder_X.fit_transform(X[:, 4])
+#onehotencoder = OneHotEncoder(categorical_features = [4])
+
+
+#X[:, 5] = labelencoder_X.fit_transform(X[:, 5])
+#onehotencoder = OneHotEncoder(categorical_features = [5])
+
+#X[:, 6] = labelencoder_X.fit_transform(X[:, 6])
+#onehotencoder = OneHotEncoder(categorical_features = [6])
+
+
+#X[:, 47] = labelencoder_X.fit_transform(X[:, 47])
+#onehotencoder = OneHotEncoder(categorical_features = [47])
+
+
+
+#X = onehotencoder.fit_transform(X).toarray()
+
+
+#dataset['B'] = dataset['B'].astype(int)
+
+
+#cols = dataset.columns
+
+#num_cols = dataset._get_numeric_data().columns
+
+#dataset.dtypes
+#Conversion of catogorical data
+
+#from sklearn.preprocessing import LabelEncoder, OneHotEncoder
+#labelencoder_X = LabelEncoder()
+
+#X[:, 3] = labelencoder_X.fit_transform(X[:, 3])
+#onehotencoder = OneHotEncoder(categorical_features = [3])
+
+#X[:, 4] = labelencoder_X.fit_transform(X[:, 5])
+#onehotencoder = OneHotEncoder(categorical_features = [5])
+
+
+
+#onehotencoder= OneHotEncoder(categorical_features="all")
+#X = onehotencoder.fit_transform(X).toarray()
+# Encoding the Dependent Variable
+#labelencoder_y = LabelEncoder()
+#y = labelencoder_y.fit_transform(y)
+
+# Splitting the dataset into the Training set and Test set
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, random_state = 0)
+
+# Feature Scaling
+from sklearn.preprocessing import StandardScaler
+sc = StandardScaler()
+X_train = sc.fit_transform(X_train)
+X_test = sc.transform(X_test)
+
+from sklearn.svm import SVC
+classifier = SVC(kernel ='rbf', random_state = 0)
+ # training set in x, y axis
+classifier.fit(x_train, y_train)
+
+y_pred = classifier.predict(X_test)
+
+# Making the Confusion Matrix
+from sklearn.metrics import confusion_matrix
+from sklearn.metrics import classification_report
+#from sklearn.metrics import accuracy
+cm1 = confusion_matrix(y_test, y_pred)
+
+
+from sklearn.metrics import accuracy_score
+print ('Accuracy for Logistic Regression Classifier :', accuracy_score(y_test,  y_pred))
+
+
